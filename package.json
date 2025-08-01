@@ -1,0 +1,28 @@
+{
+  "name": "cc-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Javaboiiii/Cloud-Computing-Course-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Javaboiiii/Cloud-Computing-Course-project/issues"
+  },
+  "homepage": "https://github.com/Javaboiiii/Cloud-Computing-Course-project#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "prom-client": "^11.5.3",
+    "winston": "^3.17.0",
+    "winston-loki": "^6.1.3"
+  }
+}
