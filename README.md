@@ -42,6 +42,12 @@ This project demonstrates a complete observability stack for a Node.js applicati
 
 ## 📋 Prerequisites
 
+You can follow the steps or just run
+
+```bash
+./start.ps1
+```
+
 Make sure you have the following installed on your system:
 
 - **Node.js** (v14 or higher)
