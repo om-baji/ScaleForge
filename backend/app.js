@@ -1,6 +1,6 @@
 const express = require('express');
-const { client } = require('./prom_client.js'); 
-const { logger } = require('./loki.js')
+const { client } = require('./sub_services/prom_client.js'); 
+const { logger } = require('./sub_services/loki.js')
 const app = express(); 
 
 app.get('/', (req, res, next) => {
