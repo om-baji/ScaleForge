@@ -6,10 +6,13 @@ import { logger } from "./sub_services/loki.js";
 import eventRouter from "./routes/event.routes.js";
 import { serve, setup } from "swagger-ui-express";
 import { config } from "./utils/swagger.js";
+import prom_client from "./sub_services/prom_client.js";
 
 const app = express();
 
 app.use("/docs", serve, setup(config));
+
+app.use(prom_client.metricsMiddleware)
 
 app.get("/", (_req, res, next) => {
   logger.info("Fetching the / error");

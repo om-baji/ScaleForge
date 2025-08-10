@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "github.com/om-baji/CC/qr_engine;qr_engine";
+
+message Request {
+    string id = 1;
+    string eventId = 2;
+    string userId = 3; 
+}
+
+message Response {
+    string qr = 1;
+}
+
+message VerifyRequest {
+    string qr = 1;
+}
+
+message VerifyResponse {
+    bool success = 1;
+    string qr = 2;
+}
+
+service Booking {
+    rpc Booking(Request) returns (Response);
+}
