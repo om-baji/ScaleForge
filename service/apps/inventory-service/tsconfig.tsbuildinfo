@@ -1,1 +1,0 @@
-{"root":["./src/config.ts","./src/index.ts","./src/controller/inventory.controller.ts","./src/middleware/validate.middleware.ts","./src/routes/inventory.routes.ts","./src/validator/zod.ts"],"version":"5.8.2"}

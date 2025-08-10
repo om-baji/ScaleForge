@@ -1,0 +1,16 @@
+{
+  "name": "broker",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/nodemailer": "^6.4.17",
+    "bullmq": "^5.56.10",
+    "nodemailer": "^7.0.5"
+  }
+}
