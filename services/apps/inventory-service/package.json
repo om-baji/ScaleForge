@@ -7,5 +7,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/morgan": "^1.9.10",
+    "cors": "^2.8.5",
+    "morgan": "^1.10.1"
   }
 }
