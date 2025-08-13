@@ -1,8 +1,8 @@
 import express from "express"
 import morgan from "morgan"
 import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './config';
-import inventoryRouter from "./routes/inventory.routes"
+import {swaggerSpec} from './config';
+import orderRouter from "./routes/order.routes"
 import winston from "winston";
 import LokiTransport from "winston-loki";
 
@@ -34,6 +34,6 @@ app.use(
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use("/api/v1/inventory", inventoryRouter);
+app.use("/api/v1/order", orderRouter);
 
-app.listen(4000, () => console.log("Inventory Service running on PORT 4000"))
+app.listen(5000, () => console.log("Order Service running on PORT 5000"))

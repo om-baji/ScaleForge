@@ -1,4 +1,4 @@
-# notification-service
+# order-service
 
 To install dependencies:
 
