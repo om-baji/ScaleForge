@@ -5,6 +5,7 @@ import swaggerSpec from './config';
 import inventoryRouter from "./routes/inventory.routes"
 import winston from "winston";
 import LokiTransport from "winston-loki";
+import metrics from "@shared/logging"
 
 const app = express()
 
@@ -31,6 +32,10 @@ app.use(
     },
   })
 );
+
+app.use(metrics.metricsMiddleware);
+
+app.get("/metrics", metrics.metricsEndpoint)
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
