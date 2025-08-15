@@ -1,1 +1,3 @@
-console.log("Hello via Bun!");
+import "./workers/notification"
+
+console.log("[BROKER] Running! ", new Date().toISOString())

@@ -5,6 +5,7 @@ import {swaggerSpec} from './config';
 import orderRouter from "./routes/order.routes"
 import winston from "winston";
 import LokiTransport from "winston-loki";
+import metrics from "@shared/logging"
 
 const app = express()
 
@@ -14,7 +15,7 @@ const logger = winston.createLogger({
   transports: [
     new LokiTransport({
       host: "http://localhost:3100",
-      labels: { app: "inventory-service" },
+      labels: { app: "order-service" },
       json: true,
       batching: true,
       interval: 5,
@@ -31,6 +32,10 @@ app.use(
     },
   })
 );
+
+app.use(metrics.metricsMiddleware);
+
+app.get("/metrics", metrics.metricsEndpoint);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
