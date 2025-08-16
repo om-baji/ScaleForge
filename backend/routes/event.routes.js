@@ -4,7 +4,7 @@ import { EventController } from "../controllers/event.controller.js";
 
 const eventRouter = express.Router();
 
-eventRouter.get("/bulk", asyncHandler())
+eventRouter.get("/bulk", asyncHandler(EventController.getAll))
 
 eventRouter.get("/:id", asyncHandler(EventController.getById))
 
