@@ -1,5 +1,6 @@
 import { Job, Worker } from "bullmq";
 import { mailer, mailTemplate } from "../emails/setup";
+import { connection } from "../connection";
 
 type Order = {
     id: string;
@@ -10,13 +11,15 @@ type Order = {
     status: string;
 }
 
-new Worker("notification", async (job : Job) => {
+new Worker("notification", async (job: Job) => {
 
     console.log("[BROKER - NOTIFICATION] ", job.name)
-    const data : Order = job.data;
+    const data: Order = job.data;
 
     await mailer.sendMail({
-        to : "",
-        html : mailTemplate(data),
+        to: data.email,
+        html: mailTemplate(data),
     })
+}, {
+    connection
 })

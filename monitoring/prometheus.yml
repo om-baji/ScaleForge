@@ -2,10 +2,10 @@ global:
   scrape_interval: 5s
   
 scrape_configs:
-  - job_name: Scrape API Service
+  - job_name: Inventory Service
     static_configs:
-      - targets: ['192.168.0.185:5000']
+      - targets: ['host.docker.internal:4000']
 
-  - job_name: Scrape Message Broker
+  - job_name: Order Service
     static_configs:
-      - targets: ['192.168.0.185:6000']
+      - targets: ['host.docker.internal:5000']

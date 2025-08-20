@@ -7,8 +7,12 @@ import eventRouter from "./routes/event.routes.js";
 import { serve, setup } from "swagger-ui-express";
 import { config } from "./utils/swagger.js";
 import prom_client from "./sub_services/prom_client.js";
+import userRouter from "./routes/user.routes.js";
+
 
 const app = express();
+
+app.use(express.json());
 
 app.use("/docs", serve, setup(config));
 
@@ -53,6 +57,7 @@ app.get("/metrics", async (_req, res, _next) => {
 });
 
 app.use("/api/v1/event", eventRouter);
+app.use("/api/v1/user", userRouter); 
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,3 +1,3 @@
 import metrics from "./prom"
 
-export default metrics;
+export default metrics; 

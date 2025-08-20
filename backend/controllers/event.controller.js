@@ -1,4 +1,5 @@
 import { ApiError } from "../handlers/global.error.js";
+import { eventSchema } from "../schema/event.schema.js";
 import { prisma } from "../utils/db.js";
 
 export class Event {
@@ -44,7 +45,7 @@ export class Event {
 
     if (!parsed.success) {
       throw new ApiError(
-        parsed.error.errors.map((e) => e.message).join(", "),
+        parsed.error.issues.map((e) => e.message).join(", "),
         400
       );
     }
@@ -74,7 +75,7 @@ export class Event {
 
     if (!parsed.success) {
       throw new ApiError(
-        parsed.error.errors.map((e) => e.message).join(", "),
+        parsed.error.issues.map((e) => e.message).join(", "),
         400
       );
     }
