@@ -18,7 +18,7 @@ const q2 = new LogQL(
 );
 
 export const fetchLogs = async () => {
-    const inventory_logs = await api.Loki.queryRange(
+    const inv_logs = await api.Loki.queryRange(
         ql,
         {
             start: "1d",
@@ -26,13 +26,21 @@ export const fetchLogs = async () => {
         }
     );
 
-    const order_logs = await api.Loki.queryRange(
+    const od_logs = await api.Loki.queryRange(
         q2,
         {
             start: "1d",
             limit: 200
         }
     );
+
+    const inventory_logs = inv_logs.logs      
+                    .filter(log => log.startsWith("HTTP Request"))
+                    .map(log => JSON.parse(log.replace("HTTP Request","")))
+
+    const order_logs = od_logs.logs      
+                    .filter(log => log.startsWith("HTTP Request"))
+                    .map(log => JSON.parse(log.replace("HTTP Request","")))
 
     return {
         inventory_logs,
