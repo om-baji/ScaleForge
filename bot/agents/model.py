@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-llm = init_chat_model(model="google-gemini-flash-2.5")
+llm = init_chat_model(model="openai/gpt-oss-20b", model_provider="groq")
 
 class Output(TypedDict):
-    query : Annotated[str,add_messages]
+    query : str
     context : list[str]
 
 model = llm.with_structured_output(Output)
