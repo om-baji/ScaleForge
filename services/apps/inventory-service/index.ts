@@ -1,27 +1,16 @@
-import express from "express"
-import morgan from "morgan"
+import { getLogger, metrics, requestLogger } from "@shared/logging";
+import express from "express";
+import morgan from "morgan";
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config';
-import inventoryRouter from "./routes/inventory.routes"
-import winston from "winston";
-import LokiTransport from "winston-loki";
-import metrics from "@shared/logging"
+import inventoryRouter from "./routes/inventory.routes";
 
 const app = express()
 
 app.use(express.json())
+app.use(requestLogger("inventory-service"))
 
-const logger = winston.createLogger({
-  transports: [
-    new LokiTransport({
-      host: "http://localhost:3100",
-      labels: { app: "inventory-service" },
-      json: true,
-      batching: true,
-      interval: 5,
-    }),
-  ],
-});
+const logger = getLogger("inventory-service")
 
 app.use(
   morgan("combined", {

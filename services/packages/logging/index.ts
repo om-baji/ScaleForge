@@ -1,3 +1,6 @@
 import metrics from "./prom"
+import getLogger from "./logs"
+import requestLogger from "./middleware";
 
-export default metrics; 
+
+export { getLogger, metrics, requestLogger};
