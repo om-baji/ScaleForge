@@ -1,0 +1,79 @@
+{
+  "id": null,
+  "uid": "node-app-dashboard",
+  "title": "Node.js Service Metrics",
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total HTTP Requests",
+      "targets": [
+        {
+          "expr": "sum(http_requests_total)"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "HTTP Errors",
+      "targets": [
+        {
+          "expr": "sum(http_request_errors_total)"
+        }
+      ],
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "gauge",
+      "title": "In-progress Requests",
+      "targets": [
+        {
+          "expr": "sum(http_requests_in_progress)"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Request Duration (p95)",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Usage",
+      "targets": [
+        {
+          "expr": "process_memory_usage_bytes{type=\"rss\"}"
+        },
+        {
+          "expr": "process_memory_usage_bytes{type=\"heapUsed\"}"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 }
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Usage (node process)",
+      "targets": [
+        {
+          "expr": "rate(node_cpu_seconds_total{mode=\"user\"}[5m])"
+        },
+        {
+          "expr": "rate(node_cpu_seconds_total{mode=\"system\"}[5m])"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 }
+    }
+  ],
+  "templating": { "list": [] },
+  "time": { "from": "now-15m", "to": "now" }
+}
