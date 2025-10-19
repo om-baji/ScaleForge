@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { AlertTriangle } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface Product {
   id: string
@@ -44,7 +44,6 @@ export function BulkStockModal({ isOpen, onClose, products, onBulkUpdate }: Bulk
     })),
   )
   const [isUpdating, setIsUpdating] = useState(false)
-  const { toast } = useToast()
 
   const handleSelectAll = (checked: boolean) => {
     setBulkItems((items) => items.map((item) => ({ ...item, selected: checked })))
@@ -64,10 +63,8 @@ export function BulkStockModal({ isOpen, onClose, products, onBulkUpdate }: Bulk
     const selectedItems = bulkItems.filter((item) => item.selected && item.newStock !== item.currentStock)
 
     if (selectedItems.length === 0) {
-      toast({
-        title: "No Changes",
+      toast("No Changes", {
         description: "Please select items with stock changes to update",
-        variant: "destructive",
       })
       return
     }
@@ -81,17 +78,14 @@ export function BulkStockModal({ isOpen, onClose, products, onBulkUpdate }: Bulk
       setIsUpdating(true)
       await onBulkUpdate(updateData)
 
-      toast({
-        title: "Bulk Update Complete",
+      toast("Bulk Update Complete", {
         description: `Successfully updated ${selectedItems.length} products`,
       })
 
       onClose()
     } catch (error) {
-      toast({
-        title: "Update Failed",
+      toast("Update Failed", {
         description: error instanceof Error ? error.message : "Failed to update stock levels",
-        variant: "destructive",
       })
     } finally {
       setIsUpdating(false)

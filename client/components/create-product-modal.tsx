@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useProducts } from "@/lib/use-inventory"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface CreateProductModalProps {
   isOpen: boolean
@@ -30,7 +30,6 @@ export function CreateProductModal({ isOpen, onClose }: CreateProductModalProps)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { createProduct } = useProducts()
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,8 +49,7 @@ export function CreateProductModal({ isOpen, onClose }: CreateProductModalProps)
       setIsSubmitting(true)
       await createProduct(productData)
 
-      toast({
-        title: "Product Created",
+      toast("Product Created", {
         description: "New product has been added to inventory",
       })
 
@@ -66,10 +64,8 @@ export function CreateProductModal({ isOpen, onClose }: CreateProductModalProps)
       setSupplier("")
       onClose()
     } catch (error) {
-      toast({
-        title: "Creation Failed",
+      toast("Creation Failed", {
         description: error instanceof Error ? error.message : "Failed to create product",
-        variant: "destructive",
       })
     } finally {
       setIsSubmitting(false)

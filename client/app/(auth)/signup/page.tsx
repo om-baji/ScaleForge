@@ -2,6 +2,7 @@
 import React, { FormEvent, ChangeEvent, useState } from "react";
 import { registerUser } from "../cognito";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface RegisterUserData {
   email: string;
@@ -109,12 +110,12 @@ const SignUp: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Already have an account?
-            <a
+            <Link
               href="/login"
               className="text-blue-600 hover:text-blue-800 font-medium ml-1"
             >
               Sign in here
-            </a>
+            </Link>
           </p>
         </div>
       </div>

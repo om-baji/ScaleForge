@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, Trash2 } from "lucide-react"
 import { useOrders } from "@/lib/use-orders"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface CreateOrderModalProps {
   isOpen: boolean
@@ -35,7 +35,6 @@ export function CreateOrderModal({ isOpen, onClose }: CreateOrderModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { createOrder } = useOrders()
-  const { toast } = useToast()
 
   const addItem = () => {
     const newItem: OrderItem = {
@@ -65,10 +64,8 @@ export function CreateOrderModal({ isOpen, onClose }: CreateOrderModalProps) {
     const validItems = items.filter((item) => item.name && item.price > 0)
 
     if (validItems.length === 0) {
-      toast({
-        title: "Invalid Items",
+      toast("Invalid Items", {
         description: "Please add at least one valid item",
-        variant: "destructive",
       })
       return
     }
@@ -86,8 +83,7 @@ export function CreateOrderModal({ isOpen, onClose }: CreateOrderModalProps) {
       setIsSubmitting(true)
       await createOrder(orderData)
 
-      toast({
-        title: "Order Created",
+      toast("Order Created", {
         description: "New order has been created successfully",
       })
 
@@ -99,10 +95,8 @@ export function CreateOrderModal({ isOpen, onClose }: CreateOrderModalProps) {
       setItems([{ id: "1", name: "", quantity: 1, price: 0 }])
       onClose()
     } catch (error) {
-      toast({
-        title: "Creation Failed",
+      toast("Creation Failed", {
         description: error instanceof Error ? error.message : "Failed to create order",
-        variant: "destructive",
       })
     } finally {
       setIsSubmitting(false)

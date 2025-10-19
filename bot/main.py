@@ -1,14 +1,24 @@
-from fastapi import FastAPI
-from agents.model import model
-from agents.state import State
+import asyncio
+from dotenv import load_dotenv
+from store.rag import analyze_logs
 
-app = FastAPI()
+load_dotenv()
 
-@app.get("/")
-def hello():
-    model.invoke("What are your capabilities?")
-    return "Hello"
+async def _main():
+    print("Log RCA assistant. Describe the issue to analyze (type 'exit' to quit).")
+    while True:
+        try:
+            user_input = input("You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if not user_input:
+            continue
+        if user_input.lower() in {"exit", "quit"}:
+            break
+        result = await analyze_logs(user_input)
+        print("Bot:")
+        print(result)
+
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=9000, log_level="info")
+    asyncio.run(_main())

@@ -1,6 +1,7 @@
 import Baker from "cronbake"
 import { persistLogs } from "./jobs/store"
 import { vectorJob } from "./jobs/vector"
+import chalk from "chalk"
 
 const baker = Baker.create({
     onError(error, jobName) {
@@ -20,5 +21,5 @@ const embedding_job = baker.add({
     callback : vectorJob
 })
 
-console.log("cronbake started!")
+console.log(chalk.yellow.inverse("⚡cronbake started!"))
 baker.bakeAll()

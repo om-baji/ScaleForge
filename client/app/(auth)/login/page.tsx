@@ -1,8 +1,9 @@
 "use client"
 import React, { FormEvent, ChangeEvent, useState } from "react";
-import { login } from "../cognito";
+import { login, getUser } from "../cognito";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
 
 interface UserData {
   username: string;
@@ -11,6 +12,7 @@ interface UserData {
 
 const Login: React.FC = () => {
   const router = useRouter();
+  const { login: authLogin } = useAuth();
   const [userData, setUserData] = useState<UserData>({
     username: "",
     password: "",
@@ -32,8 +34,11 @@ const Login: React.FC = () => {
     try {
       setButtonLoading(true);
       setError("");
-      await login(userData);
-      router.push("/welcome");
+      const result = await login(userData);
+      // Get user data after successful login
+      const user = await getUser();
+      authLogin(user);
+      router.push("/");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || "Login failed. Please try again.");
@@ -130,7 +135,7 @@ const Login: React.FC = () => {
           <p className="text-sm text-gray-600">
             Don't have an account?
             <Link
-              href="/signin"
+              href="/signup"
               className="text-blue-600 hover:text-blue-800 font-medium ml-1"
             >
               Create one here

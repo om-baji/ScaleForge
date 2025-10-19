@@ -1,59 +1,59 @@
-import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerJSDoc from "swagger-jsdoc";
 
 const swaggerOptions = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Inventory API',
-      version: '1.0.0',
-      description: 'API documentation for the Inventory Management System',
+      title: "Inventory API",
+      version: "1.0.0",
+      description: "API documentation for the Inventory Management System",
     },
     servers: [
       {
-        url: 'http://localhost:3000/api/v1',
-        description: 'Local development server'
-      }
+        url: "http://localhost:3000/api/v1",
+        description: "Local development server",
+      },
     ],
     components: {
       schemas: {
         Product: {
-          type: 'object',
+          type: "object",
           properties: {
-            id: { type: 'string', format: 'uuid' },
-            name: { type: 'string' },
-            sku: { type: 'string' },
-            description: { type: 'string' },
-            price: { type: 'number' },
-            stock: { type: 'integer' }
+            id: { type: "string", format: "uuid" },
+            name: { type: "string" },
+            sku: { type: "string" },
+            description: { type: "string" },
+            price: { type: "number" },
+            stock: { type: "integer" },
           },
-          required: ['name', 'sku', 'price', 'stock']
+          required: ["name", "sku", "price", "stock"],
         },
         StockUpdate: {
-          type: 'object',
+          type: "object",
           properties: {
-            quantity: { type: 'integer' }
+            quantity: { type: "integer" },
           },
-          required: ['quantity']
+          required: ["quantity"],
         },
         BulkStockUpdate: {
-          type: 'object',
+          type: "object",
           properties: {
             updates: {
-              type: 'array',
+              type: "array",
               items: {
-                type: 'object',
+                type: "object",
                 properties: {
-                  productId: { type: 'string', format: 'uuid' },
-                  quantity: { type: 'integer' }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  productId: { type: "string", format: "uuid" },
+                  quantity: { type: "integer" },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
-  apis: ['./routes/inventory.routes.ts'],
+  apis: ["./routes/inventory.routes.ts"],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);

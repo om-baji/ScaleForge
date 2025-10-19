@@ -3,10 +3,11 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { LayoutDashboard, ShoppingCart, Package, Users, BarChart3, Settings, Bell, Search } from "lucide-react"
+import { LayoutDashboard, ShoppingCart, Package, Users, BarChart3, Settings, Bell, Search, LogOut } from "lucide-react"
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { useAuth } from "@/lib/auth-context"
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -20,6 +21,17 @@ const navigation = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const { user, logout } = useAuth()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      router.push("/login")
+    } catch (error) {
+      console.error("Logout error:", error)
+    }
+  }
 
   return (
     <div className={cn("flex flex-col bg-sidebar border-r border-sidebar-border", collapsed ? "w-16" : "w-64")}>
@@ -79,10 +91,20 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border">
-        <Button variant="ghost" className={cn("w-full justify-start gap-3 h-11", collapsed && "justify-center px-0")}>
-          <Bell className="h-5 w-5 flex-shrink-0" />
-          {!collapsed && <span>Notifications</span>}
+      <div className="p-4 border-t border-sidebar-border space-y-2">
+        {!collapsed && user && (
+          <div className="px-3 py-2 text-sm text-muted-foreground">
+            <p className="font-medium">{user.username}</p>
+            <p className="text-xs">{user.attributes.email}</p>
+          </div>
+        )}
+        <Button 
+          variant="ghost" 
+          className={cn("w-full justify-start gap-3 h-11", collapsed && "justify-center px-0")}
+          onClick={handleLogout}
+        >
+          <LogOut className="h-5 w-5 flex-shrink-0" />
+          {!collapsed && <span>Logout</span>}
         </Button>
       </div>
     </div>

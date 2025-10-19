@@ -25,8 +25,8 @@ interface LoginUserData {
 }
 
 const poolData: PoolData = {
-  UserPoolId: process.env.USER_ID as string,
-  ClientId: process.env.CLIENT_ID as string,
+  UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID as string,
+  ClientId: process.env.NEXT_PUBLIC_CLIENT_ID as string,
 };
 
 const registerUser = (userData: RegisterUserData): Promise<string> => {
