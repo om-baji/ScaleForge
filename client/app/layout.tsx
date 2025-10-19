@@ -2,6 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { DM_Sans } from "next/font/google"
 import "./globals.css"
+import { Toaster } from "@/components/ui/sonner"
+import { AuthProvider } from "../lib/auth-context"
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -22,7 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${dmSans.variable} antialiased`}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <AuthProvider>
+          <Toaster />
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   )
 }

@@ -12,7 +12,7 @@ import { OrderDetailsModal } from "@/components/order-details-modal"
 import { CreateOrderModal } from "@/components/create-order-modal"
 import { Search, Filter, Plus, Eye, X, Download } from "lucide-react"
 import { useOrders } from "@/lib/use-orders"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 const statusColors = {
   completed: "default",
@@ -29,7 +29,6 @@ export default function OrdersPage() {
   const { orders, loading, error, updateOrderStatus, cancelOrder } = useOrders({
     status: statusFilter === "all" ? undefined : statusFilter,
   })
-  const { toast } = useToast()
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -55,15 +54,12 @@ export default function OrdersPage() {
   const handleCancelOrder = async (orderId: string) => {
     try {
       await cancelOrder(orderId)
-      toast({
-        title: "Order Cancelled",
+      toast("Order Cancelled", {
         description: `Order ${orderId} has been cancelled`,
       })
     } catch (error) {
-      toast({
-        title: "Cancellation Failed",
+      toast("Cancellation Failed", {
         description: error instanceof Error ? error.message : "Failed to cancel order",
-        variant: "destructive",
       })
     }
   }

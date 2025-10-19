@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Package, CreditCard, Calendar, User } from "lucide-react"
 import { useState } from "react"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface Order {
   id: string
@@ -39,23 +39,19 @@ const statusColors = {
 export function OrderDetailsModal({ order, isOpen, onClose, onStatusUpdate }: OrderDetailsModalProps) {
   const [newStatus, setNewStatus] = useState(order.status)
   const [isUpdating, setIsUpdating] = useState(false)
-  const { toast } = useToast()
 
   const handleStatusUpdate = async () => {
     if (newStatus !== order.status) {
       try {
         setIsUpdating(true)
         await onStatusUpdate(order.id, newStatus)
-        toast({
-          title: "Status Updated",
+        toast("Status Updated", {
           description: `Order ${order.id} status updated to ${newStatus}`,
         })
         onClose()
       } catch (error) {
-        toast({
-          title: "Update Failed",
+        toast("Update Failed", {
           description: error instanceof Error ? error.message : "Failed to update order status",
-          variant: "destructive",
         })
       } finally {
         setIsUpdating(false)
@@ -67,16 +63,13 @@ export function OrderDetailsModal({ order, isOpen, onClose, onStatusUpdate }: Or
     try {
       setIsUpdating(true)
       await onStatusUpdate(order.id, "cancelled")
-      toast({
-        title: "Order Cancelled",
+      toast("Order Cancelled", {
         description: `Order ${order.id} has been cancelled`,
       })
       onClose()
     } catch (error) {
-      toast({
-        title: "Cancellation Failed",
+      toast("Cancellation Failed", {
         description: error instanceof Error ? error.message : "Failed to cancel order",
-        variant: "destructive",
       })
     } finally {
       setIsUpdating(false)

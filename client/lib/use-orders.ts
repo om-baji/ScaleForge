@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ordersApi, type Order, type CreateOrderRequest } from "../api/orders"
-import { ApiError } from "../api-client"
+import { ordersApi, type Order, type CreateOrderRequest } from "./orders"
+import { OrderApiError } from "./order-api-client"
 
-export function useOrders(filters?: { status?: string; userId?: string }) {
+export function useOrdersByUser(userId: string) {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -13,10 +13,10 @@ export function useOrders(filters?: { status?: string; userId?: string }) {
     try {
       setLoading(true)
       setError(null)
-      const response = await ordersApi.getOrders(filters)
+      const response = await ordersApi.getOrdersByUserId(userId)
       setOrders(response.orders)
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? err.message : "Failed to fetch orders"
+      const errorMessage = err instanceof OrderApiError ? err.message : "Failed to fetch orders"
       setError(errorMessage)
       console.error("Error fetching orders:", err)
     } finally {
@@ -25,8 +25,10 @@ export function useOrders(filters?: { status?: string; userId?: string }) {
   }
 
   useEffect(() => {
-    fetchOrders()
-  }, [filters?.status, filters?.userId])
+    if (userId) {
+      fetchOrders()
+    }
+  }, [userId])
 
   const createOrder = async (orderData: CreateOrderRequest) => {
     try {
@@ -34,7 +36,7 @@ export function useOrders(filters?: { status?: string; userId?: string }) {
       setOrders((prev) => [newOrder, ...prev])
       return newOrder
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? err.message : "Failed to create order"
+      const errorMessage = err instanceof OrderApiError ? err.message : "Failed to create order"
       throw new Error(errorMessage)
     }
   }
@@ -45,7 +47,7 @@ export function useOrders(filters?: { status?: string; userId?: string }) {
       setOrders((prev) => prev.map((order) => (order.id === orderId ? updatedOrder : order)))
       return updatedOrder
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? err.message : "Failed to update order status"
+      const errorMessage = err instanceof OrderApiError ? err.message : "Failed to update order status"
       throw new Error(errorMessage)
     }
   }
@@ -56,7 +58,7 @@ export function useOrders(filters?: { status?: string; userId?: string }) {
       setOrders((prev) => prev.map((order) => (order.id === orderId ? cancelledOrder : order)))
       return cancelledOrder
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? err.message : "Failed to cancel order"
+      const errorMessage = err instanceof OrderApiError ? err.message : "Failed to cancel order"
       throw new Error(errorMessage)
     }
   }
@@ -85,7 +87,7 @@ export function useOrder(orderId: string) {
         const orderData = await ordersApi.getOrderById(orderId)
         setOrder(orderData)
       } catch (err) {
-        const errorMessage = err instanceof ApiError ? err.message : "Failed to fetch order"
+        const errorMessage = err instanceof OrderApiError ? err.message : "Failed to fetch order"
         setError(errorMessage)
         console.error("Error fetching order:", err)
       } finally {

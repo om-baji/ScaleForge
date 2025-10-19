@@ -1,3 +1,3 @@
-import "./workers/notification"
+import "./workers/notification";
 
-console.log("[BROKER] Running! [TIMESTAMP]", new Date().toISOString())
+console.log("[BROKER] Running! [TIMESTAMP]", new Date().toISOString());

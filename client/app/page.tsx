@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Package, TrendingUp, Users, BarChart3, Plus } from "lucide-react"
@@ -5,13 +7,15 @@ import { Sidebar } from "@/components/sidebar"
 import { DashboardStats } from "@/components/dashboard-stats"
 import { RecentOrders } from "@/components/recent-orders"
 import { InventoryAlerts } from "@/components/inventory-alerts"
+import { ProtectedRoute } from "@/components/protected-route"
 
 export default function DashboardPage() {
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
+    <ProtectedRoute>
+      <div className="flex min-h-screen bg-background">
+        <Sidebar />
 
-      <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-6 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="flex items-center justify-between">
             <div>
@@ -71,5 +75,6 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+    </ProtectedRoute>
   )
 }

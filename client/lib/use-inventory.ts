@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { inventoryApi, type Product, type CreateProductRequest } from "../api/inventory"
-import { ApiError } from "../api-client"
+import { inventoryApi, type Product, type CreateProductRequest } from "./inventory"
+import { ApiError } from "./api-client"
 
 export function useProducts(filters?: { category?: string; status?: string }) {
   const [products, setProducts] = useState<Product[]>([])
@@ -13,8 +13,8 @@ export function useProducts(filters?: { category?: string; status?: string }) {
     try {
       setLoading(true)
       setError(null)
-      const response = await inventoryApi.getProducts(filters)
-      setProducts(response.products)
+      const products = await inventoryApi.getProducts()
+      setProducts(products)
     } catch (err) {
       const errorMessage = err instanceof ApiError ? err.message : "Failed to fetch products"
       setError(errorMessage)
@@ -62,7 +62,7 @@ export function useProducts(filters?: { category?: string; status?: string }) {
 
   const updateStock = async (productId: string, newStock: number) => {
     try {
-      const updatedProduct = await inventoryApi.updateProductStock(productId, { stock: newStock })
+      const updatedProduct = await inventoryApi.updateProductStock(productId, { quantity: newStock })
       setProducts((prev) => prev.map((product) => (product.id === productId ? updatedProduct : product)))
       return updatedProduct
     } catch (err) {
@@ -71,7 +71,7 @@ export function useProducts(filters?: { category?: string; status?: string }) {
     }
   }
 
-  const bulkUpdateStock = async (updates: Array<{ productId: string; stock: number }>) => {
+  const bulkUpdateStock = async (updates: Array<{ productId: string; quantity: number }>) => {
     try {
       await inventoryApi.bulkUpdateStock({ updates })
       // Refresh products after bulk update
@@ -134,8 +134,8 @@ export function useLowStockProducts() {
       try {
         setLoading(true)
         setError(null)
-        const response = await inventoryApi.getLowStockProducts()
-        setProducts(response.products)
+        const products = await inventoryApi.getLowStockProducts()
+        setProducts(products)
       } catch (err) {
         const errorMessage = err instanceof ApiError ? err.message : "Failed to fetch low stock products"
         setError(errorMessage)

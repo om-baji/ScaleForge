@@ -14,7 +14,7 @@ import { CreateProductModal } from "@/components/create-product-modal"
 import { BulkStockModal } from "@/components/bulk-stock-modal"
 import { Search, Filter, Plus, Eye, Edit, Trash2, AlertTriangle, Package, TrendingDown, Download } from "lucide-react"
 import { useProducts } from "@/lib/use-inventory"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 const statusColors = {
   active: "default",
@@ -35,7 +35,6 @@ export default function InventoryPage() {
     category: categoryFilter === "all" ? undefined : categoryFilter,
     status: statusFilter === "all" ? undefined : statusFilter,
   })
-  const { toast } = useToast()
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
@@ -61,15 +60,12 @@ export default function InventoryPage() {
   const handleStockUpdate = async (productId: string, newStock: number) => {
     try {
       await updateStock(productId, newStock)
-      toast({
-        title: "Stock Updated",
+      toast("Stock Updated", {
         description: `Product stock updated to ${newStock}`,
       })
     } catch (error) {
-      toast({
-        title: "Update Failed",
+      toast("Update Failed", {
         description: error instanceof Error ? error.message : "Failed to update stock",
-        variant: "destructive",
       })
     }
   }
@@ -77,15 +73,12 @@ export default function InventoryPage() {
   const handleDeleteProduct = async (productId: string) => {
     try {
       await deleteProduct(productId)
-      toast({
-        title: "Product Deleted",
+      toast("Product Deleted", {
         description: "Product has been deleted successfully",
       })
     } catch (error) {
-      toast({
-        title: "Delete Failed",
+      toast("Delete Failed", {
         description: error instanceof Error ? error.message : "Failed to delete product",
-        variant: "destructive",
       })
     }
   }

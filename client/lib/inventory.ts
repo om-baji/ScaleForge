@@ -1,50 +1,42 @@
-import { api } from "../api-client"
+import { api } from "./api-client"
 
 // Types for Inventory API
 export interface Product {
   id: string
   name: string
   sku: string
-  category: string
+  description?: string
   price: number
   stock: number
-  lowStockThreshold: number
-  status: "active" | "inactive" | "low-stock" | "out-of-stock"
-  description: string
-  supplier: string
-  lastUpdated: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface CreateProductRequest {
   name: string
   sku: string
-  category: string
+  description?: string
   price: number
   stock: number
-  lowStockThreshold: number
-  description?: string
-  supplier?: string
 }
 
 export interface UpdateProductRequest {
   name?: string
   sku?: string
-  category?: string
-  price?: number
-  lowStockThreshold?: number
   description?: string
-  supplier?: string
+  price?: number
+  stock?: number
 }
 
 export interface BulkStockUpdateRequest {
   updates: Array<{
     productId: string
-    stock: number
+    quantity: number
   }>
 }
 
 export interface StockUpdateRequest {
-  stock: number
+  quantity: number
 }
 
 export interface StockReduceRequest {
@@ -53,26 +45,13 @@ export interface StockReduceRequest {
 
 export interface StockReserveRequest {
   quantity: number
-  reservationId?: string
 }
 
 // Inventory API service functions
 export const inventoryApi = {
   // GET /api/v1/inventory/products - Get all products
-  getProducts: async (params?: {
-    category?: string
-    status?: string
-    limit?: number
-    offset?: number
-  }): Promise<{ products: Product[]; total: number }> => {
-    const searchParams = new URLSearchParams()
-    if (params?.category) searchParams.append("category", params.category)
-    if (params?.status) searchParams.append("status", params.status)
-    if (params?.limit) searchParams.append("limit", params.limit.toString())
-    if (params?.offset) searchParams.append("offset", params.offset.toString())
-
-    const query = searchParams.toString()
-    return api.get(`/api/v1/inventory/products${query ? `?${query}` : ""}`)
+  getProducts: async (): Promise<Product[]> => {
+    return api.get("/api/v1/inventory/products")
   },
 
   // POST /api/v1/inventory/products - Create a new product
@@ -96,8 +75,9 @@ export const inventoryApi = {
   },
 
   // GET /api/v1/inventory/products/low-stock - Get low stock products
-  getLowStockProducts: async (): Promise<{ products: Product[] }> => {
-    return api.get("/api/v1/inventory/products/low-stock")
+  getLowStockProducts: async (threshold?: number): Promise<Product[]> => {
+    const query = threshold ? `?threshold=${threshold}` : ""
+    return api.get(`/api/v1/inventory/products/low-stock${query}`)
   },
 
   // PATCH /api/v1/inventory/products/stock/bulk-update - Bulk update stock
