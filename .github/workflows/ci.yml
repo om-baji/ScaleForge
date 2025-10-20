@@ -1,13 +1,58 @@
 name: Complete Backend CI Pipeline
 on:
   push:
-    branches: ['main', 'dev']
+    branches: ["main", "dev"]
   pull_request:
-    branches: ['main']
+    branches: ["main"]
 
 jobs:
-  build:
+  build-inventory-service:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services/app/inventory-service
     steps:
       - uses: actions/checkout@v4
-        name: Setup Node.js
+        name: Checkout Repository
+
+      - uses: oven-sh/setup-bun@v2
+        name: Setup Bun
+
+      - name: Build and test
+        run: |
+          bun install
+          bun build:test
+
+  build-order-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services/app/order-service
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout Repository
+
+      - uses: oven-sh/setup-bun@v2
+        name: Setup Bun
+
+      - name: Build and test
+        run: |
+          bun install
+          bun build:test
+
+  build-broker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services/app/broker
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout Repository
+
+      - uses: oven-sh/setup-bun@v2
+        name: Setup Bun
+
+      - name: Build and test
+        run: |
+          bun install
+          bun build:test
