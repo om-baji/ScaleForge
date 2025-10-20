@@ -1,87 +1,137 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Sidebar } from "@/components/sidebar"
-import { ProductDetailsModal } from "@/components/product-details-modal"
-import { CreateProductModal } from "@/components/create-product-modal"
-import { BulkStockModal } from "@/components/bulk-stock-modal"
-import { Search, Filter, Plus, Eye, Edit, Trash2, AlertTriangle, Package, TrendingDown, Download } from "lucide-react"
-import { useProducts } from "@/lib/use-inventory"
-import { toast } from "sonner"
+import { useState } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sidebar } from "@/components/sidebar";
+import { ProductDetailsModal } from "@/components/product-details-modal";
+import { CreateProductModal } from "@/components/create-product-modal";
+import { BulkStockModal } from "@/components/bulk-stock-modal";
+import {
+  Search,
+  Filter,
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  AlertTriangle,
+  Package,
+  TrendingDown,
+  Download,
+} from "lucide-react";
+import { useProducts } from "@/lib/use-inventory";
+import { toast } from "sonner";
 
 const statusColors = {
   active: "default",
   "low-stock": "secondary",
   "out-of-stock": "destructive",
   inactive: "outline",
-} as const
+} as const;
 
 export default function InventoryPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [isBulkStockModalOpen, setIsBulkStockModalOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("all")
-  const { products, loading, error, updateStock, deleteProduct, bulkUpdateStock } = useProducts({
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isBulkStockModalOpen, setIsBulkStockModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+  const {
+    products,
+    loading,
+    error,
+    updateStock,
+    deleteProduct,
+    bulkUpdateStock,
+  } = useProducts({
     category: categoryFilter === "all" ? undefined : categoryFilter,
     status: statusFilter === "all" ? undefined : statusFilter,
-  })
+  });
+
+  interface Product {
+    id: string;
+    name: string;
+    sku: string;
+    description: string | null;
+    price: bigint;
+    stock: number;
+    category?: string;
+    lowStockThreshold?: number;
+    status?: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+      product?.category?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    let matchesTab = true
+    let matchesTab = true;
     if (activeTab === "low-stock") {
-      matchesTab = product.stock <= product.lowStockThreshold && product.stock > 0
+      matchesTab =
+        product.stock <= product.lowStockThreshold && product.stock > 0;
     } else if (activeTab === "out-of-stock") {
-      matchesTab = product.stock === 0
+      matchesTab = product.stock === 0;
     } else if (activeTab === "active") {
-      matchesTab = product.status === "active"
+      matchesTab = product.status === "active";
     }
 
-    return matchesSearch && matchesTab
-  })
+    return matchesSearch && matchesTab;
+  });
 
-  const lowStockProducts = products.filter((p) => p.stock <= p.lowStockThreshold && p.stock > 0)
-  const outOfStockProducts = products.filter((p) => p.stock === 0)
+  const lowStockProducts = products.filter(
+    (p) => p.stock <= p.lowStockThreshold && p.stock > 0,
+  );
+  const outOfStockProducts = products.filter((p) => p.stock === 0);
 
   const handleStockUpdate = async (productId: string, newStock: number) => {
     try {
-      await updateStock(productId, newStock)
+      await updateStock(productId, newStock);
       toast("Stock Updated", {
         description: `Product stock updated to ${newStock}`,
-      })
+      });
     } catch (error) {
       toast("Update Failed", {
-        description: error instanceof Error ? error.message : "Failed to update stock",
-      })
+        description:
+          error instanceof Error ? error.message : "Failed to update stock",
+      });
     }
-  }
+  };
 
   const handleDeleteProduct = async (productId: string) => {
     try {
-      await deleteProduct(productId)
+      await deleteProduct(productId);
       toast("Product Deleted", {
         description: "Product has been deleted successfully",
-      })
+      });
     } catch (error) {
       toast("Delete Failed", {
-        description: error instanceof Error ? error.message : "Failed to delete product",
-      })
+        description:
+          error instanceof Error ? error.message : "Failed to delete product",
+      });
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -95,7 +145,7 @@ export default function InventoryPage() {
           </div>
         </main>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -113,7 +163,7 @@ export default function InventoryPage() {
           </div>
         </main>
       </div>
-    )
+    );
   }
 
   return (
@@ -125,15 +175,23 @@ export default function InventoryPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Inventory Management</h1>
-              <p className="text-muted-foreground mt-2">Manage products, stock levels, and inventory operations</p>
+              <h1 className="text-3xl font-bold text-foreground">
+                Inventory Management
+              </h1>
+              <p className="text-muted-foreground mt-2">
+                Manage products, stock levels, and inventory operations
+              </p>
             </div>
             <div className="flex gap-3">
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setIsBulkStockModalOpen(true)}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsBulkStockModalOpen(true)}
+              >
                 <Package className="h-4 w-4 mr-2" />
                 Bulk Update
               </Button>
@@ -151,7 +209,9 @@ export default function InventoryPage() {
                 <div className="flex items-center gap-3">
                   <Package className="h-8 w-8 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Products</p>
+                    <p className="text-sm text-muted-foreground">
+                      Total Products
+                    </p>
                     <p className="text-2xl font-bold">{products.length}</p>
                   </div>
                 </div>
@@ -163,7 +223,9 @@ export default function InventoryPage() {
                   <TrendingDown className="h-8 w-8 text-secondary" />
                   <div>
                     <p className="text-sm text-muted-foreground">Low Stock</p>
-                    <p className="text-2xl font-bold">{lowStockProducts.length}</p>
+                    <p className="text-2xl font-bold">
+                      {lowStockProducts.length}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -173,8 +235,12 @@ export default function InventoryPage() {
                 <div className="flex items-center gap-3">
                   <AlertTriangle className="h-8 w-8 text-destructive" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Out of Stock</p>
-                    <p className="text-2xl font-bold">{outOfStockProducts.length}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Out of Stock
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {outOfStockProducts.length}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -186,7 +252,10 @@ export default function InventoryPage() {
                   <div>
                     <p className="text-sm text-muted-foreground">Total Value</p>
                     <p className="text-2xl font-bold">
-                      ${products.reduce((sum, p) => sum + p.price * p.stock, 0).toLocaleString()}
+                      $
+                      {products
+                        .reduce((sum, p) => sum + p.price * p.stock, 0)
+                        .toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -207,7 +276,10 @@ export default function InventoryPage() {
                     className="pl-10"
                   />
                 </div>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <Select
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                >
                   <SelectTrigger className="w-full sm:w-48">
                     <SelectValue placeholder="Filter by category" />
                   </SelectTrigger>
@@ -237,11 +309,21 @@ export default function InventoryPage() {
           {/* Products Table with Tabs */}
           <Card>
             <CardHeader>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
                 <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="all">All Products ({products.length})</TabsTrigger>
-                  <TabsTrigger value="low-stock">Low Stock ({lowStockProducts.length})</TabsTrigger>
-                  <TabsTrigger value="out-of-stock">Out of Stock ({outOfStockProducts.length})</TabsTrigger>
+                  <TabsTrigger value="all">
+                    All Products ({products.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="low-stock">
+                    Low Stock ({lowStockProducts.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="out-of-stock">
+                    Out of Stock ({outOfStockProducts.length})
+                  </TabsTrigger>
                   <TabsTrigger value="active">Active</TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -266,17 +348,23 @@ export default function InventoryPage() {
                         <TableCell>
                           <div>
                             <p className="font-medium">{product.name}</p>
-                            <p className="text-sm text-muted-foreground">{product.id}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {product.id}
+                            </p>
                           </div>
                         </TableCell>
-                        <TableCell className="font-mono">{product.sku}</TableCell>
+                        <TableCell className="font-mono">
+                          {product.sku}
+                        </TableCell>
                         <TableCell>{product.category}</TableCell>
                         <TableCell>${product.price.toFixed(2)}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <span
                               className={
-                                product.stock <= product.lowStockThreshold ? "text-destructive font-medium" : ""
+                                product.stock <= product.lowStockThreshold
+                                  ? "text-destructive font-medium"
+                                  : ""
                               }
                             >
                               {product.stock}
@@ -287,19 +375,37 @@ export default function InventoryPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={statusColors[product.status as keyof typeof statusColors]}>
+                          <Badge
+                            variant={
+                              statusColors[
+                                product.status as keyof typeof statusColors
+                              ]
+                            }
+                          >
                             {product.status}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => setSelectedProduct(product)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSelectedProduct(product)}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => setSelectedProduct(product)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSelectedProduct(product)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleDeleteProduct(product.id)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteProduct(product.id)}
+                            >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -325,7 +431,10 @@ export default function InventoryPage() {
       )}
 
       {/* Create Product Modal */}
-      <CreateProductModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateProductModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
 
       {/* Bulk Stock Update Modal */}
       <BulkStockModal
@@ -335,5 +444,5 @@ export default function InventoryPage() {
         onBulkUpdate={bulkUpdateStock}
       />
     </div>
-  )
+  );
 }
