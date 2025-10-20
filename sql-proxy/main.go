@@ -21,19 +21,20 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/health", middleware.LogMiddleware(http.HandlerFunc(handlers.HealthHandler)))
 
-	var wg *sync.WaitGroup
+	var wg sync.WaitGroup
 
-	wg.Add(1)
+	wg.Add(2)
 	go func() {
+		defer wg.Done()
 		utils.Logger().Info("Starting HTTP Server!")
 		http.ListenAndServe(":8080", mux)
-		wg.Wait()
 	}()
 
-	wg.Add(1)
+
 	go func() {
+		defer wg.Done()
 		tcp.StartServer()
-		wg.Wait()
 	}()
 
+	wg.Wait()
 }
