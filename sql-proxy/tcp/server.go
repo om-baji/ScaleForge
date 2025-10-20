@@ -9,7 +9,7 @@ import (
 )
 
 func StartServer() error {
-	listerner, err := net.Listen("tcp", ":7000")
+	listerner, err := net.Listen("tcp", ":5433")
 
 	handlers.HandleError(err)
 

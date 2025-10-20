@@ -56,3 +56,43 @@ jobs:
         run: |
           bun install
           bun build:test
+
+  build-sql-proxy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./sql-proxy
+    steps:
+      - uses: actions/checkout@v5
+        name: Checkout Repository
+
+      - uses: actions/setup-go@v6
+        name: Setup Go
+        with:
+          go-version: ">=1.21.0"
+
+      - name: Build and test
+        run: |
+          go mod tidy
+          make build
+
+  build-next-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - uses: actions/checkout@v5
+        name: Checkout Repository
+
+      - uses: actions/setup-node@v6
+        name: Setup Node
+
+      - name: Setup PNPM ans Install Dependencies
+        run: |
+          npm install -g npm
+          pnpm install
+
+      - name: Build
+        run: |
+          pnpm build
