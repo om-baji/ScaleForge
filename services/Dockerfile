@@ -14,4 +14,6 @@ RUN ./setup.sh
 
 RUN bun test
 
+EXPOSE 3000
+
 CMD [ "bun", "dev" ]

@@ -1,16 +1,16 @@
 import { getLogger, metrics, requestLogger } from "@shared/logging";
 import express from "express";
 import morgan from "morgan";
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './config';
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config";
 import inventoryRouter from "./routes/inventory.routes";
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use(requestLogger("inventory-service"))
+app.use(express.json());
+app.use(requestLogger("inventory-service"));
 
-const logger = getLogger("inventory-service")
+const logger = getLogger("inventory-service");
 
 app.use(
   morgan("combined", {
@@ -19,15 +19,15 @@ app.use(
         logger.info(message.trim());
       },
     },
-  })
+  }),
 );
 
 app.use(metrics.metricsMiddleware);
 
-app.get("/metrics", metrics.metricsEndpoint)
+app.get("/metrics", metrics.metricsEndpoint);
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use("/api/v1/inventory", inventoryRouter);
+app.use("/", inventoryRouter);
 
-app.listen(4000, () => console.log("Inventory Service running on PORT 4000"))
+app.listen(4000, () => console.log("Inventory Service running on PORT 4000"));

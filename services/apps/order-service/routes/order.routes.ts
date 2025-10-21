@@ -5,7 +5,16 @@ const orderRouter = express.Router();
 
 /**
  * @swagger
- * /api/v1/orders:
+ * /orders/health:
+ *   get:
+ *     summary: Get health status
+ *     tags: [Orders]
+ */
+orderRouter.get("/health", OrderController.getHealth);
+
+/**
+ * @swagger
+ * /orders:
  *   post:
  *     summary: Create a new order
  *     tags: [Orders]
@@ -40,7 +49,7 @@ orderRouter.post("/", OrderController.createOrder);
 
 /**
  * @swagger
- * /api/v1/orders/{id}:
+ * /orders/{id}:
  *   get:
  *     summary: Get order by ID
  *     tags: [Orders]
@@ -56,7 +65,7 @@ orderRouter.get("/:id", OrderController.getOrder);
 
 /**
  * @swagger
- * /api/v1/orders/user/{id}:
+ * /orders/user/{id}:
  *   get:
  *     summary: Get all orders for a user
  *     tags: [Orders]
@@ -72,7 +81,7 @@ orderRouter.get("/user/:id", OrderController.getUserOrders);
 
 /**
  * @swagger
- * /api/v1/orders/{id}/status:
+ * /orders/{id}/status:
  *   patch:
  *     summary: Update order status
  *     tags: [Orders]
@@ -100,7 +109,7 @@ orderRouter.patch("/:id/status", OrderController.updateOrderStatus);
 
 /**
  * @swagger
- * /api/v1/orders/{id}/cancel:
+ * /orders/{id}/cancel:
  *   patch:
  *     summary: Cancel an order
  *     tags: [Orders]

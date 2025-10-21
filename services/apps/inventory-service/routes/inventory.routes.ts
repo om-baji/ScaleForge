@@ -5,7 +5,16 @@ const inventoryRouter = express.Router();
 
 /**
  * @swagger
- * /api/v1/inventory/products:
+ * /inventory/health:
+ *   get:
+ *     summary: Get health status
+ *     tags: [Inventory]
+ */
+inventoryRouter.get("/health", InventoryController.getHealth);
+
+/**
+ * @swagger
+ * /inventory/products:
  *   post:
  *     summary: Create a new product
  *     tags: [Inventory]
@@ -36,7 +45,7 @@ inventoryRouter.post("/products", InventoryController.createProduct);
 
 /**
  * @swagger
- * /api/v1/inventory/products:
+ * /inventory/products:
  *   get:
  *     summary: Get all products
  *     tags: [Inventory]
@@ -45,7 +54,7 @@ inventoryRouter.get("/products", InventoryController.getAllProducts);
 
 /**
  * @swagger
- * /api/v1/inventory/products/low-stock:
+ * /inventory/products/low-stock:
  *   get:
  *     summary: Get low stock products
  *     tags: [Inventory]
@@ -57,11 +66,14 @@ inventoryRouter.get("/products", InventoryController.getAllProducts);
  *           default: 10
  *         description: Stock threshold limit
  */
-inventoryRouter.get("/products/low-stock", InventoryController.getLowStockProducts);
+inventoryRouter.get(
+  "/products/low-stock",
+  InventoryController.getLowStockProducts,
+);
 
 /**
  * @swagger
- * /api/v1/inventory/products/stock/bulk-update:
+ * /inventory/products/stock/bulk-update:
  *   patch:
  *     summary: Bulk update stock
  *     tags: [Inventory]
@@ -83,11 +95,14 @@ inventoryRouter.get("/products/low-stock", InventoryController.getLowStockProduc
  *                     quantity:
  *                       type: integer
  */
-inventoryRouter.patch("/products/stock/bulk-update", InventoryController.bulkUpdateStock);
+inventoryRouter.patch(
+  "/products/stock/bulk-update",
+  InventoryController.bulkUpdateStock,
+);
 
 /**
  * @swagger
- * /api/v1/inventory/products/{id}:
+ * /inventory/products/{id}:
  *   get:
  *     summary: Get product by ID
  *     tags: [Inventory]
@@ -103,7 +118,7 @@ inventoryRouter.get("/products/:id", InventoryController.getProduct);
 
 /**
  * @swagger
- * /api/v1/inventory/products/{id}:
+ * /inventory/products/{id}:
  *   put:
  *     summary: Update product
  *     tags: [Inventory]
@@ -133,7 +148,7 @@ inventoryRouter.put("/products/:id", InventoryController.updateProduct);
 
 /**
  * @swagger
- * /api/v1/inventory/products/{id}:
+ * /inventory/products/{id}:
  *   delete:
  *     summary: Delete product
  *     tags: [Inventory]
@@ -149,7 +164,7 @@ inventoryRouter.delete("/products/:id", InventoryController.deleteProduct);
 
 /**
  * @swagger
- * /api/v1/inventory/products/{id}/stock:
+ * /inventory/products/{id}/stock:
  *   patch:
  *     summary: Update product stock
  *     tags: [Inventory]
@@ -176,7 +191,7 @@ inventoryRouter.patch("/products/:id/stock", InventoryController.updateStock);
 
 /**
  * @swagger
- * /api/v1/inventory/products/{id}/stock/reduce:
+ * /inventory/products/{id}/stock/reduce:
  *   patch:
  *     summary: Reduce product stock
  *     tags: [Inventory]
@@ -200,11 +215,14 @@ inventoryRouter.patch("/products/:id/stock", InventoryController.updateStock);
  *                 type: integer
  *                 minimum: 1
  */
-inventoryRouter.patch("/products/:id/stock/reduce", InventoryController.reduceStock);
+inventoryRouter.patch(
+  "/products/:id/stock/reduce",
+  InventoryController.reduceStock,
+);
 
 /**
  * @swagger
- * /api/v1/inventory/products/{id}/stock/check:
+ * /inventory/products/{id}/stock/check:
  *   get:
  *     summary: Check product stock
  *     tags: [Inventory]
@@ -216,11 +234,14 @@ inventoryRouter.patch("/products/:id/stock/reduce", InventoryController.reduceSt
  *           type: string
  *           format: uuid
  */
-inventoryRouter.get("/products/:id/stock/check", InventoryController.checkStock);
+inventoryRouter.get(
+  "/products/:id/stock/check",
+  InventoryController.checkStock,
+);
 
 /**
  * @swagger
- * /api/v1/inventory/products/{id}/stock/reserve:
+ * /inventory/products/{id}/stock/reserve:
  *   patch:
  *     summary: Reserve product stock
  *     tags: [Inventory]
@@ -244,6 +265,9 @@ inventoryRouter.get("/products/:id/stock/check", InventoryController.checkStock)
  *                 type: integer
  *                 minimum: 1
  */
-inventoryRouter.patch("/products/:id/stock/reserve", InventoryController.reserveStock);
+inventoryRouter.patch(
+  "/products/:id/stock/reserve",
+  InventoryController.reserveStock,
+);
 
 export default inventoryRouter;
