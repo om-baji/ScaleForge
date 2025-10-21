@@ -13,6 +13,14 @@ app.get("/health", (_req, res) => {
   });
 });
 
+app.get("/", (_req, res) => {
+  res.json({
+    service: "Gateway Service",
+    status: "OK",
+    time: new Date().toISOString(),
+  });
+});
+
 app.listen(3000, () => {
   console.log("Gateway service is running on port 3000");
 });

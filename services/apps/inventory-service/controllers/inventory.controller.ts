@@ -23,6 +23,7 @@ class Inventory {
     res.status(200).json({
       success: true,
       data: {
+        service: "Inventory Service",
         status: "OK",
         time: new Date().toISOString(),
       },

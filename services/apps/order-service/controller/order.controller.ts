@@ -19,6 +19,7 @@ class OrderControllerClass {
     res.status(200).json({
       success: true,
       data: {
+        service: "Orders Service",
         status: "OK",
         time: new Date().toISOString(),
       },
