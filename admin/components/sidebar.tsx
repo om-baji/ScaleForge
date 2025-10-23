@@ -10,9 +10,12 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  Cloud,
+  LogOut,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-type ViewType = "overview" | "grafana" | "analysis" | "chatbot" | "notifications"
+type ViewType = "overview" | "grafana" | "analysis" | "chatbot" | "notifications" | "deployment"
 
 interface SidebarProps {
   activeView: ViewType
@@ -21,6 +24,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeView, onViewChange }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const router = useRouter()
 
   const menuItems = [
     { id: "overview" as ViewType, label: "Overview", icon: LayoutDashboard },
@@ -28,7 +32,13 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
     { id: "analysis" as ViewType, label: "RCA Analysis", icon: AlertCircle },
     { id: "chatbot" as ViewType, label: "AI Assistant", icon: MessageSquare },
     { id: "notifications" as ViewType, label: "Notifications", icon: Bell },
+    { id: "deployment" as ViewType, label: "Deploy", icon: Cloud },
   ]
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken")
+    router.push("/login")
+  }
 
   return (
     <aside
@@ -77,7 +87,7 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border">
+      <div className="p-4 border-t border-sidebar-border space-y-2">
         <button
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent transition-colors ${
             isCollapsed ? "justify-center" : ""
@@ -86,6 +96,16 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
         >
           <Settings className="w-5 h-5 flex-shrink-0" />
           {!isCollapsed && <span className="text-sm font-medium">Settings</span>}
+        </button>
+        <button
+          onClick={handleLogout}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive transition-colors ${
+            isCollapsed ? "justify-center" : ""
+          }`}
+          title={isCollapsed ? "Logout" : undefined}
+        >
+          <LogOut className="w-5 h-5 flex-shrink-0" />
+          {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
         </button>
       </div>
     </aside>

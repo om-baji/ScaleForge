@@ -46,19 +46,24 @@ const registerUser = (userData: RegisterUserData): Promise<string> => {
       [],
       (err, result) => {
         if (err || !result) {
-          reject(new Error("Error in registration: " + (err?.message || "Unknown")));
+          reject(
+            new Error("Error in registration: " + (err?.message || "Unknown")),
+          );
           return;
         }
         const cognitoUser = result.user;
         const username = cognitoUser.getUsername();
         localStorage.setItem("pendingUsername", username);
         resolve(username);
-      }
+      },
     );
   });
 };
 
-const confirmation = (confirmationCode: string, username: string): Promise<string> => {
+const confirmation = (
+  confirmationCode: string,
+  username: string,
+): Promise<string> => {
   return new Promise((resolve, reject) => {
     const userPool = new CognitoUserPool(poolData);
     const userData = { Username: username, Pool: userPool };
@@ -82,7 +87,9 @@ const resendCode = (username: string): Promise<string> => {
 
     cognitoUser.resendConfirmationCode((err, result) => {
       if (err || !result) {
-        reject(new Error("Error resending code: " + (err?.message || "Unknown")));
+        reject(
+          new Error("Error resending code: " + (err?.message || "Unknown")),
+        );
         return;
       }
       resolve(result);
@@ -91,7 +98,7 @@ const resendCode = (username: string): Promise<string> => {
 };
 
 const login = (
-  userData: LoginUserData
+  userData: LoginUserData,
 ): Promise<{ accessToken: string; idToken: string; user: CognitoUser }> => {
   return new Promise((resolve, reject) => {
     const authenticationDetails = new AuthenticationDetails({
@@ -119,7 +126,10 @@ const login = (
   });
 };
 
-const getUser = (): Promise<{ username: string; attributes: Record<string, string> }> => {
+const getUser = (): Promise<{
+  username: string;
+  attributes: Record<string, string>;
+}> => {
   return new Promise((resolve, reject) => {
     const userPool = new CognitoUserPool(poolData);
     const cognitoUser = userPool.getCurrentUser();
@@ -129,26 +139,32 @@ const getUser = (): Promise<{ username: string; attributes: Record<string, strin
       return;
     }
 
-    cognitoUser.getSession((err: Error | null, session: CognitoUserSession | null) => {
-      if (err || !session || !session.isValid()) {
-        reject(new Error("User session expired or invalid"));
-        return;
-      }
-
-      cognitoUser.getUserAttributes((err, result) => {
-        if (err || !result) {
-          reject(new Error("Error getting user attributes: " + (err?.message || "Unknown")));
+    cognitoUser.getSession(
+      (err: Error | null, session: CognitoUserSession | null) => {
+        if (err || !session || !session.isValid()) {
+          reject(new Error("User session expired or invalid"));
           return;
         }
 
-        const attributes: Record<string, string> = {};
-        result.forEach((attr: CognitoAttr) => {
-          attributes[attr.getName()] = attr.getValue() || "";
-        });
+        cognitoUser.getUserAttributes((err, result) => {
+          if (err || !result) {
+            reject(
+              new Error(
+                "Error getting user attributes: " + (err?.message || "Unknown"),
+              ),
+            );
+            return;
+          }
 
-        resolve({ username: cognitoUser.getUsername(), attributes });
-      });
-    });
+          const attributes: Record<string, string> = {};
+          result.forEach((attr: CognitoAttr) => {
+            attributes[attr.getName()] = attr.getValue() || "";
+          });
+
+          resolve({ username: cognitoUser.getUsername(), attributes });
+        });
+      },
+    );
   });
 };
 
@@ -179,14 +195,24 @@ const isAuthenticated = (): Promise<boolean> => {
       return;
     }
 
-    cognitoUser.getSession((err: Error | null, session: CognitoUserSession | null) => {
-      if (err || !session || !session.isValid()) {
-        resolve(false);
-        return;
-      }
-      resolve(true);
-    });
+    cognitoUser.getSession(
+      (err: Error | null, session: CognitoUserSession | null) => {
+        if (err || !session || !session.isValid()) {
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      },
+    );
   });
 };
 
-export { registerUser, confirmation, resendCode, login, getUser, logout, isAuthenticated };
+export {
+  registerUser,
+  confirmation,
+  resendCode,
+  login,
+  getUser,
+  logout,
+  isAuthenticated,
+};

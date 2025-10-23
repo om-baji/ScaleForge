@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ordersApi, type Order, type CreateOrderRequest } from "./orders";
 import { OrderApiError } from "./order-api-client";
 
-export function useOrdersByUser(userId: string) {
+export function useOrders(userId: string) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -23,13 +23,7 @@ export function useOrdersByUser(userId: string) {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchOrders();
-    }
-  }, [userId, fetchOrders]);
+  }, [userId]);
 
   const createOrder = async (orderData: CreateOrderRequest) => {
     try {

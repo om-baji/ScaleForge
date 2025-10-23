@@ -1,10 +1,10 @@
 version: "3.8"
-services: 
-  prom-server: 
+services:
+  prom-server:
     image: prom/prometheus
-    ports: 
+    ports:
       - 9090:9090
-    volumes: 
+    volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
@@ -15,7 +15,7 @@ services:
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/dashboards:/var/lib/grafana/dashboards
-  
+
   loki:
     image: grafana/loki
     ports:

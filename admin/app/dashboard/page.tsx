@@ -8,8 +8,9 @@ import { GrafanaDashboard } from "@/components/grafana-dashboard"
 import { RCAAnalysis } from "@/components/rca-analysis"
 import { RCAChatbot } from "@/components/rca-chatbot"
 import { NotificationsView } from "@/components/notifications-view"
+import { DeploymentPage } from "@/components/deployment-page"
 
-type ViewType = "overview" | "grafana" | "analysis" | "chatbot" | "notifications"
+type ViewType = "overview" | "grafana" | "analysis" | "chatbot" | "notifications" | "deployment"
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -57,6 +58,7 @@ export default function DashboardPage() {
           {activeView === "analysis" && <RCAAnalysis />}
           {activeView === "chatbot" && <RCAChatbot />}
           {activeView === "notifications" && <NotificationsView />}
+          {activeView === "deployment" && <DeploymentPage />}
         </main>
       </div>
     </div>
