@@ -1,79 +1,343 @@
 {
   "id": null,
-  "uid": "node-app-dashboard",
-  "title": "Node.js Service Metrics",
+  "uid": null,
+  "title": "Inventory & Orders Metrics",
+  "tags": [],
+  "style": "dark",
   "timezone": "browser",
-  "schemaVersion": 36,
-  "version": 1,
-  "refresh": "5s",
+  "editable": true,
+  "hideControls": false,
+  "graphTooltip": 1,
   "panels": [
     {
-      "type": "stat",
-      "title": "Total HTTP Requests",
-      "targets": [
-        {
-          "expr": "sum(http_requests_total)"
-        }
-      ],
-      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
-    },
-    {
-      "type": "stat",
-      "title": "HTTP Errors",
-      "targets": [
-        {
-          "expr": "sum(http_request_errors_total)"
-        }
-      ],
-      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
-    },
-    {
-      "type": "gauge",
-      "title": "In-progress Requests",
-      "targets": [
-        {
-          "expr": "sum(http_requests_in_progress)"
-        }
-      ],
-      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 }
-    },
-    {
       "type": "timeseries",
-      "title": "Request Duration (p95)",
+      "title": "HTTP Requests (rate per s) — inventory",
+      "id": 1,
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))"
-        }
-      ],
-      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 }
-    },
-    {
-      "type": "timeseries",
-      "title": "Memory Usage",
-      "targets": [
-        {
-          "expr": "process_memory_usage_bytes{type=\"rss\"}"
+          "expr": "sum(rate(inventory_http_requests_total[5m])) by (method)",
+          "legendFormat": "{{method}}",
+          "refId": "A"
         },
         {
-          "expr": "process_memory_usage_bytes{type=\"heapUsed\"}"
+          "expr": "sum(rate(http_requests_total[5m])) by (method)",
+          "legendFormat": "orders: {{method}}",
+          "refId": "B"
         }
-      ],
-      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 }
+      ]
     },
     {
       "type": "timeseries",
-      "title": "CPU Usage (node process)",
+      "title": "HTTP Duration p95 (s) — inventory",
+      "id": 2,
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
       "targets": [
         {
-          "expr": "rate(node_cpu_seconds_total{mode=\"user\"}[5m])"
+          "expr": "histogram_quantile(0.95, sum(rate(inventory_http_request_duration_seconds_bucket[5m])) by (le, method))",
+          "legendFormat": "{{method}} p95",
+          "refId": "A"
         },
         {
-          "expr": "rate(node_cpu_seconds_total{mode=\"system\"}[5m])"
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, method))",
+          "legendFormat": "orders: {{method}} p95",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Product Operations (rate)",
+      "id": 3,
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(rate(inventory_product_operations_total[5m])) by (operation, status)",
+          "legendFormat": "{{operation}} {{status}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Stock Operations (rate) by operation",
+      "id": 4,
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(rate(inventory_stock_operations_total[5m])) by (operation)",
+          "legendFormat": "{{operation}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(stock_operations_total[5m])) by (operation)",
+          "legendFormat": "orders: {{operation}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "title": "Products by Category (latest)",
+      "id": 5,
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(inventory_products_by_category) by (category)",
+          "legendFormat": "{{category}}",
+          "refId": "A"
         }
       ],
-      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 }
+      "options": {
+        "orientation": "horizontal",
+        "showUnfilled": true,
+        "displayMode": "auto"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Products",
+      "id": 6,
+      "gridPos": { "x": 12, "y": 12, "w": 6, "h": 3 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "inventory_total_products",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "none" }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Out of Stock Products",
+      "id": 7,
+      "gridPos": { "x": 18, "y": 12, "w": 6, "h": 3 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "inventory_out_of_stock_products",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "none" }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Low Stock Products (threshold=*)",
+      "id": 8,
+      "gridPos": { "x": 12, "y": 15, "w": 6, "h": 3 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(inventory_low_stock_products) by (threshold)",
+          "legendFormat": "threshold={{threshold}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "none" }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Inventory Value",
+      "id": 9,
+      "gridPos": { "x": 18, "y": 15, "w": 6, "h": 3 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "inventory_total_value",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "currencyUSD" }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Stock Level",
+      "id": 10,
+      "gridPos": { "x": 0, "y": 18, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "inventory_average_stock_level",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Stock Reservations (rate) success vs failure",
+      "id": 11,
+      "gridPos": { "x": 12, "y": 18, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(rate(inventory_stock_reservations_total[5m])) by (status)",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(inventory_stock_reservation_failures_total[5m])) by (reason)",
+          "legendFormat": "fail: {{reason}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Database Query Duration p95 (s) by table",
+      "id": 12,
+      "gridPos": { "x": 0, "y": 24, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(inventory_database_query_duration_seconds_bucket[5m])) by (le, table))",
+          "legendFormat": "{{table}} p95",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(database_query_duration_seconds_bucket[5m])) by (le, table))",
+          "legendFormat": "orders: {{table}} p95",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Order Creation Duration p95 (s)",
+      "id": 13,
+      "gridPos": { "x": 12, "y": 24, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(order_creation_duration_seconds_bucket[5m])) by (le, status))",
+          "legendFormat": "{{status}} p95",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Order Creation Rate & Errors",
+      "id": 14,
+      "gridPos": { "x": 0, "y": 30, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(rate(order_creation_total[5m])) by (status)",
+          "legendFormat": "orders: {{status}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(order_creation_errors_total[5m])) by (error_type)",
+          "legendFormat": "errors: {{error_type}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Top 10 Products by Inventory Stock",
+      "id": 15,
+      "gridPos": { "x": 12, "y": 30, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "topk(10, sum(inventory_stock) by (product_id, product_name))",
+          "refId": "A"
+        }
+      ],
+      "options": { "showHeader": true }
+    },
+    {
+      "type": "timeseries",
+      "title": "Bulk Operation Duration p95 (s)",
+      "id": 16,
+      "gridPos": { "x": 0, "y": 36, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(inventory_bulk_operation_duration_seconds_bucket[5m])) by (le, operation, item_count))",
+          "legendFormat": "{{operation}} items={{item_count}} p95",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Stock Transactions (rate) by type",
+      "id": 17,
+      "gridPos": { "x": 12, "y": 36, "w": 12, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(rate(inventory_stock_transactions_total[5m])) by (type)",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Stock Operation Errors by type",
+      "id": 18,
+      "gridPos": { "x": 0, "y": 42, "w": 24, "h": 6 },
+      "datasource": "${datasource}",
+      "targets": [
+        {
+          "expr": "sum(rate(inventory_stock_operation_errors_total[5m])) by (operation, error_type)",
+          "legendFormat": "{{operation}} {{error_type}}",
+          "refId": "A"
+        }
+      ]
     }
   ],
-  "templating": { "list": [] },
-  "time": { "from": "now-15m", "to": "now" }
+  "templating": {
+    "list": [
+      {
+        "type": "datasource",
+        "name": "datasource",
+        "label": "Prometheus",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "query": "prometheus",
+        "refresh": 1,
+        "sort": 1
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "1h"]
+  }
 }

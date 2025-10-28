@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-inventory-svc:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -14,8 +14,29 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
+      - name: Use Inventory Directory
+        run: cd inventory-svc
+
       - name: Build Docker image
-        run: docker build -t ombaji/services:latest .
+        run: docker build -t ombaji/inventory-service:latest .
 
       - name: Push Docker image to DockerHub
-        run: docker push ombaji/services:latest
+        run: docker push ombaji/inventory-service:latest
+
+  build-orders-svc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Use Order Directory
+        run: cd orders-svc
+
+      - name: Build Docker image
+        run: docker build -t ombaji/orders-service:latest .
+
+      - name: Push Docker image to DockerHub
+        run: docker push ombaji/orders-service:latest

@@ -19,7 +19,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            cd /path/to/your/app
+            cd /server
             npm install
             npm run build
             pm2 restart your-app

@@ -10,7 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./server
+        working-directory: ./inventory-svc
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout Repository
+
+      - uses: actions/setup-node@v6
+        name: Setup Node
+
+      - uses: pnpm/action-setup@v4
+        name: Setup PNPM
+
+      - name: Build and test
+        run: |
+          pnpm install
+          pnpm build
+
+  build-order-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./orders-svc
     steps:
       - uses: actions/checkout@v4
         name: Checkout Repository
