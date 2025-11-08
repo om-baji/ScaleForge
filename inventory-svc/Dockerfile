@@ -1,23 +1,21 @@
-FROM node:20-alpine as builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
+RUN npm install
 
-RUN npm install -g pnpm && pnpm install
-
-COPY . ./
+COPY . .
 
 RUN npx prisma generate
 
-FROM node:20-alpine as runner
-
-WORKDIR /app
-
-COPY --from=builder /app .
-
 RUN npm run build
 
+FROM node:20-alpine AS runner
+
+COPY --from=builder /app ./
+
+ENV NODE_ENV=production
 EXPOSE 4002
 
-CMD [ "npm","run", "start" ]
+CMD ["npm", "run", "start"]

@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres
+    
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+
+  server:
+    image: ombaji/orders-svc
+    ports:
+      - 4001:4001
+    environment:
+      - DATABASE_URL=postgres://postgres:password@localhost:5432/inventory
+      - REDIS_URL=redis://localhost:6379
