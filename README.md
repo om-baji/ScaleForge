@@ -1,199 +1,220 @@
-# 🚀 Auto-Forge
+# Auto-Forge
 
-**Auto-Forge** is a full-stack, microservices-driven automation platform built with **NestJS**, **Next.js**, and **AWS serverless components**.
-It enables complete lifecycle management for **Inventory** and **Order** systems — from front-end dashboards to backend monitoring, intelligent log analysis, and automated deployments.
+Auto-Forge is a comprehensive microservices-based automotive parts inventory and order management system. It provides a scalable solution for managing automotive parts inventory, processing orders, and monitoring system performance in real-time.
 
----
+## 🏗️ Architecture Overview
 
-## 🧩 Architecture Overview
+The system is built using a microservices architecture with the following key components:
 
-The platform is composed of multiple independent modules:
+- **Admin Service**: Dashboard and management interface for system administrators
+- **Client Service**: User-facing application for inventory and order management
+- **Inventory Service**: Handles inventory management and stock tracking
+- **Orders Service**: Manages order processing and fulfillment
+- **Serverless Functions**: Handles background jobs and async processing
+- **Webhook Service**: Manages external integrations and notifications
 
-| Module                 | Description                                                                                                                                                                                                                      |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **client/**            | Next.js web application for managing Inventory and Orders.                                                                                                                                                                       |
-| **admin/**             | Next.js Admin Dashboard for DevOps and SRE teams with:<br> - Root Cause Analysis Chatbot (using Loki logs)<br> - Blue-Green & Canary Deployment controls for EC2 services<br> - Service monitoring and deployment status panels. |
-| **server/**            | Core backend built with **NestJS microservices** managing Inventory, Orders, and inter-service messaging.                                                                                                                        |
-| **monitoring/**        | Complete observability stack with **Grafana**, **Prometheus**, and **Loki** via Docker Compose and YAML manifests.                                                                                                               |
-| **serverless/**        | AWS Lambda function that streams Loki logs to **S3** and **Pinecone** for vector-based log intelligence.                                                                                                                         |
-| **webhook/**           | Lambda-based webhook that syncs user data from **AWS Cognito** into internal databases/services.                                                                                                                                 |
-| **.github/workflows/** | GitHub Actions workflows for CI/CD pipelines and automatic EC2 deployments.                                                                                                                                                      |
+## 🚀 Technologies Used
 
----
+- **Frontend**: Next.js, TypeScript, Tailwind CSS
+- **Backend**: NestJS, tRPC, Prisma
+- **Database**: PostgreSQL
+- **Caching**: Redis
+- **Monitoring**: Grafana, Prometheus, Loki
+- **Container Orchestration**: Kubernetes
+- **CI/CD**: GitHub Actions
+- **Load Testing**: Artillery.io, K6
+- **Kubernetes Visualization**: K9s, Lens
+- **Service Mesh**: Istio
 
-## ⚙️ Tech Stack
+## 📦 Prerequisites
 
-### Frontend
+- Node.js (v18 or higher)
+- Docker and Docker Compose
+- Kubernetes cluster (for production deployment)
+- pnpm (package manager)
+- PostgreSQL
+- Redis
 
-* **Next.js 15**
-* **TypeScript**
-* **tRPC**
-* **TailwindCSS / Shad CN**
+## 🔧 Local Development Setup
 
-### Backend
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/om-baji/Auto-Forge.git
+   cd Auto-Forge
+   ```
 
-* **NestJS Microservices**
+2. Install dependencies for all services:
+   ```bash
+   # Install dependencies for admin service
+   cd admin && pnpm install
+   
+   # Install dependencies for client service
+   cd ../client && pnpm install
+   
+   # Install dependencies for inventory service
+   cd ../inventory-svc && pnpm install
+   
+   # Install dependencies for orders service
+   cd ../orders-svc && pnpm install
+   ```
 
-  * Handles Inventory and Orders services.
-  * Communicates via message brokers (e.g., Redis / NATS / RabbitMQ).
+3. Set up environment variables:
+   - Copy the example env files for each service
+   - Configure database connections and other required variables
 
-### Monitoring
+4. Start the development environment:
+   ```bash
+   # Start all services using Docker Compose
+   docker-compose up -d
+   ```
 
-* **Grafana** dashboards for real-time metrics.
-* **Prometheus** for metrics collection.
-* **Loki** for centralized logging.
-* **Root Cause Chatbot** powered by Pinecone + OpenAI API.
+## 🌐 Deployment
 
-### Cloud & Serverless
+### Kubernetes Deployment
 
-* **AWS Lambda** for serverless processing.
-* **S3** for log archival.
-* **Pinecone Vector DB** for semantic search on logs.
-* **AWS Cognito** for user identity management.
-* **EC2 Blue-Green and Canary Deployments** integrated with GitHub Actions.
+1. Configure Kubernetes cluster:
+   ```bash
+   # Apply Kubernetes configurations
+   kubectl apply -f k8s/inventory/
+   kubectl apply -f k8s/orders/
+   kubectl apply -f k8s/postgres/
+   kubectl apply -f k8s/redis/
 
----
+   # Apply HPA configurations
+   kubectl apply -f k8s/hpa/
+   ```
 
-## 🏗️ Repository Structure
+2. Set up monitoring stack:
+   ```bash
+   # Deploy monitoring components
+   cd monitoring
+   docker-compose up -d
+   ```
 
-```
-Auto-Forge/
-├── .github/
-│   └── workflows/        # CI/CD pipelines & EC2 auto-deploy flows
-├── admin/                # Next.js Admin Dashboard
-├── client/               # Next.js Inventory & Orders Website
-├── monitoring/           # Grafana + Prometheus + Loki setup
-├── server/               # NestJS Microservices (Inventory & Orders)
-├── serverless/           # AWS Lambda for Loki → S3/Pinecone
-├── webhook/              # AWS Cognito → Internal system sync
-├── .gitignore
-└── README.md
-```
+3. Configure Ingress and SSL:
+   - Update ingress configurations in k8s manifests
+   - Configure SSL certificates
+   - Set up DNS records
 
----
+4. Horizontal Pod Autoscaling (HPA):
+   ```bash
+   # View HPA status
+   kubectl get hpa
+   
+   # Monitor scaling events
+   kubectl describe hpa [hpa-name]
+   ```
 
-## 🧠 Features
+5. Kubernetes Visualization:
+   ```bash
+   # Using K9s
+   k9s
+   
+   # Or access Lens Dashboard
+   lens
+   ```
 
-### 🧾 Inventory & Orders
+The system uses HPA for automatic scaling based on metrics like CPU utilization and request count:
 
-* Manage inventory lifecycle and order processing.
-* Real-time synchronization between services using NestJS microservices.
+![Kubernetes Architecture](assets/image.png)
 
-### 🧑‍💼 Admin Dashboard
+HPA in action during load testing shows automatic scaling of pods:
 
-* Visualize deployments and service health.
-* Launch Blue-Green or Canary deployments from UI.
-* Root Cause Chatbot — query historical logs from Loki, backed by Pinecone embeddings.
+![HPA Scaling](assets/hpa.jpg)
 
-### 🔍 Observability
+### Monitoring Setup
 
-* Centralized monitoring via Grafana + Prometheus + Loki stack.
-* Auto-provisioned dashboards and alerts.
-* Metrics and logs exported to S3.
+1. Access Grafana dashboards:
+   - Default URL: http://localhost:3000
+   - Default credentials: admin/admin
 
-### ☁️ Serverless Intelligence
+2. Configure data sources:
+   - Add Prometheus data source
+   - Add Loki for log aggregation
 
-* Lambda collects and indexes logs in Pinecone for semantic debugging.
-* Webhook auto-populates Cognito user changes to internal DBs.
+3. Import dashboards:
+   - System metrics dashboard
+   - Service-specific dashboards
+   - Custom metrics dashboards
 
-### 🚀 CI/CD & Deployment
+## 🔍 Microservices Details
 
-* GitHub Actions automate:
+### Inventory Service
+- **Port**: 3001
+- **Responsibilities**:
+  - Inventory management
+  - Stock level tracking
+  - Product information
+  - Inventory alerts
+- **API Documentation**: Available at `/api/docs` when running locally
 
-  * Build → Test → Deploy cycles.
-  * Blue-Green and Canary rollout on EC2.
-  * Infrastructure provisioning and rollback mechanisms.
+### Orders Service
+- **Port**: 3002
+- **Responsibilities**:
+  - Order processing
+  - Order status management
+  - Order history
+  - Payment integration
+- **API Documentation**: Available at `/api/docs` when running locally
 
----
+### Admin Dashboard
+- **Port**: 3003
+- **Features**:
+  - System monitoring
+  - User management
+  - Configuration management
+  - Analytics dashboard
 
-## 🧰 Setup Instructions
+### Client Application
+- **Port**: 3000
+- **Features**:
+  - Product catalog
+  - Order management
+  - Inventory status
+  - Real-time notifications
 
-### Prerequisites
+## 📊 Monitoring and Observability
 
-* Node.js ≥ 18
-* Docker & Docker Compose
-* AWS credentials configured (`aws configure`)
-* Pinecone API key
-* OpenAI API key (for chatbot)
+### Metrics Collection
+- System metrics via Prometheus
+- Custom business metrics
+- Service-level indicators (SLIs)
+- Service-level objectives (SLOs)
+- HPA metrics tracking
+- Real-time pod scaling metrics
 
-### 1. Clone the Repository
+### Logging
+- Centralized logging with Loki
+- Log aggregation and searching
+- Error tracking and alerting
+- Stress test logs analysis
+- Performance bottleneck identification
 
-```bash
-git clone https://github.com/<your-org>/Auto-Forge.git
-cd Auto-Forge
-```
+### Alerting
+- Alert configuration in Grafana
+- Integration with notification channels
+- Custom alert rules and thresholds
+- Scaling event notifications
+- Performance degradation alerts
 
-### 2. Start Monitoring Stack
+### Load Testing and Performance
+- Artillery.io for API endpoint stress testing
+- K6 for performance benchmarking
+- Stress test scenarios:
+  ```bash
+  # Run API stress test
+  artillery run load-tests/api-test.yml
+  
+  # Run K6 performance test
+  k6 run k6/performance-test.js
+  ```
+- Automatic scaling validation
+- Performance metrics collection
 
-```bash
-cd monitoring
-docker-compose up -d
-```
+## 🔒 Security
 
-### 3. Start Backend (NestJS)
-
-```bash
-cd server
-npm install
-npm run start:dev
-```
-
-### 4. Start Client Applications
-
-```bash
-cd client
-npm install
-npm run dev
-
-cd ../admin
-npm install
-npm run dev
-```
-
-### 5. Deploy Serverless Functions
-
-Deploy using AWS SAM or the Serverless Framework:
-
-```bash
-cd serverless
-sls deploy
-```
-
----
-
-## 📈 Monitoring & RCA Chatbot
-
-1. Access Grafana at `http://localhost:3000`
-2. Loki, Prometheus, and alerting dashboards auto-provisioned.
-3. Use the **RCA Chatbot** in the Admin panel to query issues semantically:
-
-   * Example: *"Why did the EC2 deployment fail yesterday?"*
-
----
-
-## 🔄 CI/CD Workflows
-
-* Located under `.github/workflows/`
-* Includes:
-
-  * **Build & Test**: Runs linting, tests, and build for all services.
-  * **Deploy to EC2**: Blue-Green and Canary deployment strategy.
-  * **Serverless Deployment**: Lambda updates and rollbacks.
-  * **Monitor & Alert**: Triggered on failed deployments or high error rates.
-
----
-
-## 🧭 Future Roadmap
-
-* ✅ Add distributed tracing with OpenTelemetry
-* ✅ Expand RCA Chatbot with multi-source log enrichment
-* 🔲 Introduce Kubernetes Helm charts for easier deployments
-* 🔲 Add fine-grained role-based access control (RBAC) in Admin panel
-
----
-
-## 📜 License
-
-MIT © 2025 — **Auto-Forge Dev Team**
-
----
+- JWT-based authentication
+- Role-based access control (RBAC)
+- API rate limiting
+- Data encryption at rest and in transit
+- Regular security updates
