@@ -1,11 +1,10 @@
 import {
-  CognitoUserPool,
-  CognitoUserAttribute,
-  CognitoUser,
   AuthenticationDetails,
-  ISignUpResult,
-  CognitoUserSession,
   CognitoUserAttribute as CognitoAttr,
+  CognitoUser,
+  CognitoUserAttribute,
+  CognitoUserPool,
+  CognitoUserSession
 } from "amazon-cognito-identity-js";
 
 interface PoolData {
@@ -208,11 +207,6 @@ const isAuthenticated = (): Promise<boolean> => {
 };
 
 export {
-  registerUser,
-  confirmation,
-  resendCode,
-  login,
-  getUser,
-  logout,
-  isAuthenticated,
+  confirmation, getUser, isAuthenticated, login, logout, registerUser, resendCode
 };
+

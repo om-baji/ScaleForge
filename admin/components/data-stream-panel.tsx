@@ -6,8 +6,8 @@ import { Card } from "@/components/ui/card"
 interface DataStreamPanelProps {
   clusterData: any
   isConnected: boolean
-  onConnect: () => void
-  onDisconnect: () => void
+  onTogglePolling: (polling: boolean) => void
+  isPolling: boolean
 }
 
 const getStatusColor = (status: string) => {
@@ -58,8 +58,7 @@ const getPodStatistics = (pods: any[]) => {
   return stats
 }
 
-export function DataStreamPanel({ clusterData, isConnected, onConnect, onDisconnect }: DataStreamPanelProps) {
-  const [showLogs, setShowLogs] = useState(false)
+export function DataStreamPanel({ clusterData, isConnected, onTogglePolling, isPolling }: DataStreamPanelProps) {
   const [detailedView, setDetailedView] = useState<"pods" | "services" | "deployments">("pods")
 
   const stats = {
@@ -72,24 +71,22 @@ export function DataStreamPanel({ clusterData, isConnected, onConnect, onDisconn
 
   return (
     <div className="space-y-4">
-      {/* Connection Status */}
       <Card className="p-4 bg-card border-border">
-        <h3 className="font-semibold text-sm mb-3 text-foreground">Connection</h3>
+        <h3 className="font-semibold text-sm mb-3 text-foreground">Polling</h3>
         <div className="space-y-2">
           <button
-            onClick={isConnected ? onDisconnect : onConnect}
+            onClick={() => onTogglePolling(!isPolling)}
             className={`w-full px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-              isConnected
+              isPolling
                 ? "bg-red-500/10 text-red-600 hover:bg-red-500/20"
                 : "bg-green-500/10 text-green-600 hover:bg-green-500/20"
             }`}
           >
-            {isConnected ? "Disconnect" : "Connect Stream"}
+            {isPolling ? "Stop Polling" : "Start Polling"}
           </button>
         </div>
       </Card>
 
-      {/* Statistics */}
       <Card className="p-4 bg-card border-border">
         <h3 className="font-semibold text-sm mb-3 text-foreground">Cluster Stats</h3>
         <div className="space-y-2">
@@ -108,9 +105,8 @@ export function DataStreamPanel({ clusterData, isConnected, onConnect, onDisconn
         </div>
       </Card>
 
-      {/* Pod Status Breakdown */}
       <Card className="p-4 bg-card border-border">
-        <h3 className="font-semibold text-sm mb-3 text-foreground">Pod Status Breakdown</h3>
+        <h3 className="font-semibold text-sm mb-3 text-foreground">Pod Status</h3>
         <div className="space-y-2">
           {podStats.running > 0 && (
             <div className="flex justify-between items-center p-2 bg-emerald-500/10 rounded">
@@ -120,7 +116,7 @@ export function DataStreamPanel({ clusterData, isConnected, onConnect, onDisconn
           )}
           {podStats.crashed > 0 && (
             <div className="flex justify-between items-center p-2 bg-red-500/10 rounded">
-              <span className="text-xs text-red-700">Crashed (CrashLoopBackOff)</span>
+              <span className="text-xs text-red-700">Crashed</span>
               <span className="font-semibold text-sm text-red-600">{podStats.crashed}</span>
             </div>
           )}
@@ -148,7 +144,6 @@ export function DataStreamPanel({ clusterData, isConnected, onConnect, onDisconn
       <Card className="p-4 bg-card border-border">
         <h3 className="font-semibold text-sm mb-3 text-foreground">Details</h3>
 
-        {/* Tab buttons */}
         <div className="flex gap-2 mb-3 border-b border-border">
           {(["pods", "services", "deployments"] as const).map((tab) => (
             <button
@@ -165,7 +160,6 @@ export function DataStreamPanel({ clusterData, isConnected, onConnect, onDisconn
           ))}
         </div>
 
-        {/* Resource Details */}
         <div className="text-xs space-y-2 max-h-64 overflow-y-auto">
           {detailedView === "pods" &&
             clusterData?.pods?.map((pod: any) => (
@@ -214,14 +208,6 @@ export function DataStreamPanel({ clusterData, isConnected, onConnect, onDisconn
               </div>
             ))}
         </div>
-      </Card>
-
-      {/* Stream Instructions */}
-      <Card className="p-4 bg-muted/50 border border-border text-xs">
-        <p className="font-semibold mb-2 text-foreground">Bash Script:</p>
-        <code className="text-muted-foreground block p-2 bg-background rounded font-mono text-xs overflow-x-auto">
-          {`while true; do\n  kubectl get all -o json | \\\n  jq '{pods: .items[] | select(.kind=="Pod")}'\n  sleep 2\ndone`}
-        </code>
       </Card>
     </div>
   )

@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Cloud,
+  Brackets,
   LogOut,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -33,6 +34,7 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
     { id: "chatbot" as ViewType, label: "AI Assistant", icon: MessageSquare },
     { id: "notifications" as ViewType, label: "Notifications", icon: Bell },
     { id: "deployment" as ViewType, label: "Deploy", icon: Cloud },
+    { id: "kubernetes" as ViewType, label: "Kubernetes", icon: Brackets },
   ]
 
   const handleLogout = () => {
