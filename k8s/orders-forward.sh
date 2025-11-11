@@ -1,0 +1,1 @@
+kubectl port-forward services/inventory 4001:4001
