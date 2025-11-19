@@ -343,19 +343,3 @@ HPA Scaling Example:
 ![HPA Scaling](assets/hpa.jpg)
 
 ---
-## Contributing
-1. Fork & branch (`feat/<description>`)
-2. Add tests for new logic
-3. Run lint & typecheck
-4. Open PR – describe change & operational impact
-
----
-## License
-TBD – Add explicit license file (e.g., MIT) for clarity.
-
----
-## Disclaimer
-Sample credentials in examples are placeholders. Replace all secrets before deploying to any shared or production environment.
-
----
-Happy building, scaling & debugging! 🚀
